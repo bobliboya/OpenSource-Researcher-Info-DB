@@ -10,10 +10,10 @@
 | Captain     |  pjame2@illinois.edu  |
 | Member1     |        Alex Yan       |
 | Member1     |   yueyan2@illinois.edu  |
-| Member2     |     Ti-Chung Cheng     |
-| Member2     |  tichung3@illinois.edu |
-| Member3     |                        |
-| Member3     |                        |
+| Member2     |         Boyang Li         |
+| Member2     |  boyangl3@illinois.edu |
+| Member3     |                   |
+| Member3     |       |
 
 ## Project Information
 
