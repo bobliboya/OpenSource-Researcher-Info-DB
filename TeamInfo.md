@@ -8,8 +8,8 @@
 | TeamName    |         OpenSource     |
 | Captain     |       Philip James     |
 | Captain     |  pjame2@illinois.edu  |
-| Member1     |        Kevin Pei       |
-| Member1     |   kevin2@illinois.edu  |
+| Member1     |        Alex Yan       |
+| Member1     |   yueyan2@illinois.edu  |
 | Member2     |     Ti-Chung Cheng     |
 | Member2     |  tichung3@illinois.edu |
 | Member3     |                        |
