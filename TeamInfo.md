@@ -12,8 +12,8 @@
 | Member1     |   yueyan2@illinois.edu  |
 | Member2     |         Boyang Li         |
 | Member2     |  boyangl3@illinois.edu |
-| Member3     |                   |
-| Member3     |       |
+| Member3     |     Chinmay Bhogilal     |
+| Member3     |    chinmay9@illinois.edu   |
 
 ## Project Information
 
