@@ -1,11 +1,11 @@
-# team096-The Skyeye
+# team096-OpenSource
 
 ## Basic Information
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
 | TeamID      |        Team-096        |
-| TeamName    |        The Skyeye      |
+| TeamName    |        OpenSource      |
 | Captain     |       Philip James     |
 | Captain     |  pjame2@illinois.edu   |
 | Member1     |        Alex Yan        |
@@ -19,7 +19,7 @@
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-|  Title      |       The Skyeye       |
+|  Title      |       OpenSource       |
 | System URL  |      link_to_system    |
 | Video Link  |      link_to_video     |
 
