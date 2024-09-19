@@ -1,4 +1,4 @@
-# team096-OpenSource
+# team096-The Skyeye
 
 ## Basic Information
 
