@@ -5,21 +5,21 @@
 |   Info      |        Description     |
 | ----------- | ---------------------- |
 | TeamID      |        Team-096        |
-| TeamName    |         OpenSource     |
+| TeamName    |        The Skyeye      |
 | Captain     |       Philip James     |
-| Captain     |  pjame2@illinois.edu  |
-| Member1     |        Alex Yan       |
-| Member1     |   yueyan2@illinois.edu  |
-| Member2     |         Boyang Li         |
+| Captain     |  pjame2@illinois.edu   |
+| Member1     |        Alex Yan        |
+| Member1     |   yueyan2@illinois.edu |
+| Member2     |         Boyang Li      |
 | Member2     |  boyangl3@illinois.edu |
-| Member3     |     Chinmay Bhogilal     |
-| Member3     |    chinmay9@illinois.edu   |
+| Member3     |     Chinmay Bhogilal   |
+| Member3     |    chinmay9@illinois.edu |
 
 ## Project Information
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-|  Title      |       OpenSource       |
+|  Title      |       The Skyeye       |
 | System URL  |      link_to_system    |
 | Video Link  |      link_to_video     |
 
