@@ -2,6 +2,7 @@
 from flask import Flask
 import mysql.connector
 from s import *
+from api.query import *
 
 
 app = Flask(__name__)
@@ -25,7 +26,8 @@ def get_db_connection():
 def get_data():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM author")
+    query = generate_query(get_colnames("author"), "author")
+    cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
     conn.close()
