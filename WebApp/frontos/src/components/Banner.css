@@ -1,0 +1,38 @@
+.banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #282c34;
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .banner-left .banner-title {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .banner-right {
+    display: flex;
+    gap: 15px;
+    padding: 10px 80px;
+  }
+  
+  .banner-button {
+    text-decoration: none;
+    color: white;
+    padding: 8px 12px;
+    background-color: #61dafb;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .banner-button:hover {
+    background-color: #21a1f1;
+  }
+  
