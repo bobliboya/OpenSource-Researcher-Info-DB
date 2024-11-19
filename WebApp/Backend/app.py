@@ -2,6 +2,7 @@
 from flask import Flask, jsonify
 import mysql.connector
 from s import *
+from api.query import *
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -27,7 +28,8 @@ def get_db_connection():
 def get_data():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM author LIMIT 20")
+    query = generate_query(get_colnames("author"), "author")
+    cursor.execute(query)
     data = cursor.fetchall()
     
     column_names = [desc[0] for desc in cursor.description]
