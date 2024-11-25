@@ -5,15 +5,18 @@ import Banner from "./components/Banner";
 import About from "./pages/About";
 import Board from "./pages/Board";
 import Home from "./pages/Home";
+import EditData from "./pages/EditData";
 const App = () => {
   return (
     <Router>
       <Banner />
-      <div style={{ marginTop: "60px" }}> {/* Offset for fixed banner */}
+      <div style={{ marginTop: "100px", padding: "0px", position: "relative"}}> {/* Offset for fixed banner */}
         <Routes>
             <Route path="/" element={<Home />} />  
           <Route path="/about" element={<About />} />
           <Route path="/board" element={<Board />} />
+          <Route path="/edit-data" element={<EditData />} />
+          
         </Routes>
       </div>
     </Router>

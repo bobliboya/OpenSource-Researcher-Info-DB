@@ -12,6 +12,7 @@ const Banner = () => {
         <Link to="/" className="banner-button">Home</Link>
         <Link to="/board" className="banner-button">Board</Link>
         <Link to="/about" className="banner-button">About</Link>
+        <Link to="/edit-data" className="banner-button">Edit Data</Link>
       </div>
     </header>
   );
