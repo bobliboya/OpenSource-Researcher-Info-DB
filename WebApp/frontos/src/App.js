@@ -1,10 +1,10 @@
-
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Banner from "./components/Banner";
 import About from "./pages/About";
 import Board from "./pages/Board";
 import Home from "./pages/Home";
+import Music from "./pages/Music";
 import EditData from "./pages/EditData";
 const App = () => {
   return (
@@ -15,8 +15,8 @@ const App = () => {
             <Route path="/" element={<Home />} />  
           <Route path="/about" element={<About />} />
           <Route path="/board" element={<Board />} />
-          <Route path="/edit-data" element={<EditData />} />
-          
+          <Route path="/music" element={<Music />} />
+          <Route path="/edit-data" element={<EditData />} /> 
         </Routes>
       </div>
     </Router>
