@@ -1,4 +1,114 @@
-.board {
+/* src/pages/Board.css */
+
+.board-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #ffffff;
+  font-family: Arial, sans-serif; /* Optional: Set a default font */
+}
+
+.navbar {
+  background-color: #004b66;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.board-content {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 20px;
+  flex: 1; /* Ensures content takes available space */
+}
+
+.create-board {
+  background-color: #b2ffb2;
+  padding: 20px;
+  border: 2px solid #004b66;
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.create-board h2 {
+  color: red;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.board-input {
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #004b66;
+  font-size: 16px; /* Optional: Increase input font size */
+}
+
+.create-button {
+  background-color: #add8e6;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px; /* Optional: Increase button font size */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.create-button:hover {
+  background-color: #004b66;
+  color: white;
+}
+
+.insert-options {
+  background-color: #ffccaa;
+  padding: 20px;
+  border: 2px solid #004b66;
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+.option-button {
+  display: block;
+  width: 80%;
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #add8e6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px; /* Optional: Increase button font size */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.option-button:hover {
+  background-color: #004b66;
+  color: white;
+}
+
+/* Optional: Authors Section Styles */
+/*
+.authors-section {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.authors-section h2 {
+  color: #333;
+  margin-bottom: 15px;
+}
+*/
+
+
+
+
+/* .board {
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
@@ -17,4 +127,6 @@
     line-height: 1.6;
     color: #333;
   }
-  
+   */
+
+   
