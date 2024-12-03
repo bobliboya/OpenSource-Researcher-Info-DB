@@ -1,13 +1,17 @@
 .search-bar-container {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 50%; /* Ensure it respects the parent's width */
+  max-width: calc(100% - 20px); /* Subtract padding or gap space */
+  flex-wrap: nowrap; /* Ensure it doesn't wrap */
+  box-sizing: border-box; /* Includes padding and border in size calculations */
+}
   
   .search-input {
     padding: 8px 12px;
