@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
 // this file was written by chatGPT
-const EditBox = ({ data, onSave }) => {
+import React, { useState, useEffect } from 'react';
+
+const EditableFields = ({ data, onSave }) => {
+  const [showSaveStatus, setShowSaveStatus] = useState([]);
+  const [saveStatus, setSaveStatus] = useState([]);
   const [workData, setWorkData] = useState({
+    id: '',
     title: '',
     publication_year: '',
-    authors: [],
-    topics: [],
+    authors: '',
+    topics: '',
   });
 
   useEffect(() => {
     if (data) {
       setWorkData({
+        id: data.id || '',
         title: data.title || '',
         publication_year: data.publication_year || '',
         authors: data.authors.map((author) => author.author_name).join(', ') || '',
@@ -27,19 +32,44 @@ const EditBox = ({ data, onSave }) => {
   };
 
   const handleSave = () => {
-    // Convert authors and topics back into arrays of objects before saving
+    // Prepare data for the PUT request
     const updatedData = {
-      ...workData,
-      authors: workData.authors.split(',').map((author) => ({ author_name: author.trim() })),
-      topics: workData.topics.split(',').map((topic) => ({ topic_name: topic.trim() })),
+      work_id: workData.work_id,
+      title: workData.title,
+      publication_year: workData.publication_year,
+      authors: workData.authors.split(',').map((author) => author.trim()),
+      topics: workData.topics.split(',').map((topic) => topic.trim()),
     };
 
-    onSave(updatedData);
+    fetch('http://127.0.0.1:5000/api/UpdateWorkInfo', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          setSaveStatus("Error updating data");
+          throw new Error(`Failed to update data: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((responseData) => {
+        console.log('Successfully updated:', responseData);
+        setSaveStatus("Successfully updated");
+        onSave(updatedData); // Update the parent state if needed
+      })
+      .catch((error) => {
+        console.error('Error updating data:', error);
+        setSaveStatus("Error updating data");
+      });
+      setShowSaveStatus(true);
   };
 
   return (
     <div style={{ width: '100%', padding: '20px', border: '1px solid #ddd', marginBottom: '20px' }}>
-      <h4>Edit Work</h4>
+      <h4>Edit Work (ID: {workData.id})</h4>
       
       {/* Title */}
       <div style={{ marginBottom: '10px' }}>
@@ -76,7 +106,7 @@ const EditBox = ({ data, onSave }) => {
       </div>
 
       {/* Topics */}
-      <div style={{ marginBottom: '10px' }}>
+      <div style={{ marginBottom: '10px'}}>
         <label>Topics:</label>
         <input
           type="text"
@@ -90,12 +120,14 @@ const EditBox = ({ data, onSave }) => {
       {/* Save Button */}
       <button
         onClick={handleSave}
-        style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white' }}
+        style={{ padding: '10px 30px', marginRight: '10px', backgroundColor: '#4CAF50', color: 'white' }}
       >
         Save
       </button>
+      {showSaveStatus ? saveStatus : ""}
+      
     </div>
   );
 };
 
-export default EditBox;
+export default EditableFields;

@@ -15,6 +15,79 @@ db_config = {
     'database': db_name
 }
 
+
+
+@app.route("/api/UpdateWorkInfo", methods=["PUT"])
+def update_work():
+    data = request.json
+    work_id = data.get('work_id')
+    title = data.get('title')
+    publication_year = data.get('publication_year')
+    authors = data.get('authors', [])
+    topics = data.get('topics', [])
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Update title and publication_year in `work` table
+            query_work = """
+                UPDATE work
+                SET title = %s, publication_year = %s
+                WHERE work_id = %s
+            """
+            cursor.execute(query_work, (title, publication_year, work_id))
+            
+            # Delete existing authors/topics and re-insert them
+            query_delete_authors = """
+                DELETE FROM work_author
+                WHERE work_id = (SELECT work_id FROM work WHERE work_id = %s)
+            """
+            cursor.execute(query_delete_authors, (work_id,))
+
+            for author in authors:
+                query_add_author = """
+                    INSERT INTO author (author_name)
+                    VALUES (%s)
+                    ON DUPLICATE KEY UPDATE author_name = author_name
+                """
+                cursor.execute(query_add_author, (author,))
+
+                query_work_author = """
+                    INSERT INTO work_author (work_id, author_id)
+                    SELECT work.work_id, author.author_id
+                    FROM work, author
+                    WHERE work.title = %s AND author.author_name = %s
+                """
+                cursor.execute(query_work_author, (title, author))
+            
+            query_delete_topics = """
+                DELETE FROM work_topic
+                WHERE work_id = (SELECT work_id FROM work WHERE title = %s)
+            """
+            cursor.execute(query_delete_topics, (title,))
+
+            for topic in topics:
+                query_add_topic = """
+                    INSERT INTO topic (topic_name)
+                    VALUES (%s)
+                    ON DUPLICATE KEY UPDATE topic_name = topic_name
+                """
+                cursor.execute(query_add_topic, (topic,))
+
+                query_work_topic = """
+                    INSERT INTO work_topic (work_id, topic_id)
+                    SELECT work.work_id, topic.topic_id
+                    FROM work, topic
+                    WHERE work.title = %s AND topic.topic_name = %s
+                """
+                cursor.execute(query_work_topic, (title, topic))
+
+        conn.commit()
+        return jsonify({"message": "Work info updated successfully"}), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
 # this function will return the authors, topics, and publication year for a given title
 @app.route("/api/GetWorkInfo/", methods=["GET"])
 def get_output_info():
@@ -32,7 +105,7 @@ def get_output_info():
 
             # Query the database for a work object with the given title
             queryWork = """
-                SELECT title, publication_year 
+                SELECT work_id, title, publication_year 
                 FROM work
                 WHERE title = %s
             """
@@ -60,6 +133,7 @@ def get_output_info():
 
             if workTitle:
                 work_data = {
+                    "id": workTitle[0]['work_id'][21:],
                     "title": workTitle[0]['title'],
                     "publication_year": workTitle[0]['publication_year'],
                     "authors": authors,
