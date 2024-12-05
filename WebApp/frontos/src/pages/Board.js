@@ -1,69 +1,149 @@
-// src/pages/Board.js
-
 import React, { useState } from "react";
-import "./Board.css";
+import "./Board.css"; // Include a CSS file for styling
 import axios from "axios"; // Import axios for HTTP requests
 import graph_holder from "./img/graph_holder.png"
 
 function processInput(inputString) {
-    // Split the input by semicolons
     let elements = inputString.split(";");
-
-    // Trim leading and trailing whitespace and newlines from each element
     elements = elements.map(element => element.trim());
-
-    // Return the processed array
     return elements;
+}
+
+function makeUniversityCard(university) {
+    return (<div className="card">
+        <div className="card-header">University</div>
+        <div className="card-title">{university.Institution_Name}</div>
+        <div> <span className="card-rowname"> ID: </span> {university.InstitutionId}</div>
+        <div> <span className="card-rowname"> City: </span> {university.City}</div>
+        <div> <span className="card-rowname"> Country: </span> {university.Country}</div>
+    </div>);
+}
+
+function makeTopicCard(topic) {
+    return (<div className="card">
+        <div className="card-header">Topic</div>
+        <div className="card-title">{topic.topic_name}</div>
+        <div> <span className="card-rowname"> ID: </span> {topic.topic_id}</div>
+        <div> <span className="card-rowname"> Category: </span> {topic.category}</div>
+    </div>);
+}
+
+function makePeopleCard(people) {
+    return (<div className="card">
+        <div className="card-header">People</div>
+        <div className="card-title">{people.author_name}</div>
+        <div> <span className="card-rowname"> ID: </span> {people.author_id}</div>
+        <div> <span className="card-rowname"> University: </span> {people.university_name}</div>
+    </div>);
 }
 
 const Board = () => {
     // State variables for board creation and inputs
-    const [universityInput, setUniversityInput] = useState(""); // For searching universities
+    const [universityInput, setUniversityInput] = useState("");
     const [topicInput, setTopicInput] = useState("");
     const [peopleInput, setPeopleInput] = useState("");
 
     // State variables for fetched data
-    const [universities, setUniversities] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [people, setPeople] = useState([]);
+    const [universityInfo, setUniversityInfo] = useState(null);
+    const [topicInfo, setTopicInfo] = useState(null);
+    const [peopleInfo, setPeopleInfo] = useState(null);
 
-    // State variables for loading and error handling
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
+    // // State variables for display loading, error and message
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState("");
+    // const [message, setMessage] = useState("");
 
     // Handler for fetching universities
-    const handleFetchUniversities = async () => {
+    const handleFetchUniversities = () => {
         if (!universityInput.trim()) {
-            setError("Please enter a university name.");
+            console.error("Input is empty");
             return;
         }
+        console.log("University Input:", universityInput);
 
-        setLoading(true);
-        setError("");
-        try {
-            const response = await axios.get(
-                `/api/universities?name=${encodeURIComponent(universityInput)}`
-            );
-            setUniversities(response.data); // Adjust based on your backend response structure
-        } catch (err) {
-            console.error(err);
-            setError("Failed to fetch universities.");
-        } finally {
-            setLoading(false);
+        fetch("http://127.0.0.1:5000/api/insertUniversity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ university: universityInput }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to insert: ${response.status}");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("University successfully inserted:", data);
+                setUniversityInfo(data); // Display the university information
+                setUniversityInput(""); // Clear the input field
+            })
+            .catch((error) => {
+                console.error("Error inserting university:", error);
+            });
+    };
+
+    // Handler for fetching topics
+    const handleFetchTopics = () => {
+        if (!topicInput.trim()) {
+            console.error("Input is empty");
+            return;
         }
+        console.log("Topic Input:", topicInput);
+
+        fetch("http://127.0.0.1:5000/api/insertTopic", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ topic: topicInput }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to insert: ${response.status}");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Topic successfully inserted:", data);
+                setTopicInfo(data); // Display the topic information
+                setTopicInput(""); // Clear the input field
+            })
+            .catch((error) => {
+                console.error("Error inserting topic:", error);
+            });
     };
 
-    const handleFetchTopics = async () => {
-        setMessage("This is a message for handleFetchTopics!");
-        let parsed = processInput(topicInput);
-        console.log(parsed);
-        return;
-    };
+    // Handler for fetching people
+    const handleFetchPeople = () => {
+        if (!peopleInput.trim()) {
+            console.error("Input is empty");
+            return;
+        }
+        console.log("People Input:", peopleInput);
 
-    const handleFetchPeople = async () => {
-        setMessage("This is a message for handleFetchPeople!");
-        return;
+        fetch("http://127.0.0.1:5000/api/insertPeople", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ people: peopleInput }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to insert: ${response.status}");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("People successfully inserted:", data);
+                setPeopleInfo(data); // Display the people information
+                setPeopleInput(""); // Clear the input field
+            })
+            .catch((error) => {
+                console.error("Error inserting people:", error);
+            });
     };
 
     return (
@@ -72,8 +152,28 @@ const Board = () => {
             <div className="board-content">
 
                 <div className="board-area">
-                    <img src={graph_holder} width="80%" ></img>
-                    
+                    <div className="info-board">
+                        {universityInfo ? (
+                            makeUniversityCard(universityInfo)
+                        ) : (
+                            <p>No university information to display</p>
+                        )}
+
+                        {topicInfo ? (
+                            makeTopicCard(topicInfo)
+                        ) : (
+                            <p>No topic information to display</p>
+                        )}
+
+                        {peopleInfo ? (
+                            makePeopleCard(peopleInfo)
+                        ) : (
+                            <p>No people information to display</p>
+                        )}
+
+
+                    </div>
+
                 </div>
                 {/* Insert Options Section */}
                 <div className="insert-options">
@@ -89,14 +189,6 @@ const Board = () => {
                         <button onClick={handleFetchUniversities}>
                             Insert Universities
                         </button>
-                        {/* Display Universities */}
-                        {universities.length > 0 && (
-                            <ul className="results-list">
-                                {universities.map((uni) => (
-                                    <li key={uni.id}>{uni.name}</li>
-                                ))}
-                            </ul>
-                        )}
                     </div>
 
                     {/* Topics */}
@@ -123,17 +215,8 @@ const Board = () => {
                 </div>
             </div>
 
-            {/* Loading Indicator */}
-            {loading && <div className="loading">Loading...</div>}
 
-            {/* Error Message */}
-            {error && <div className="error">{error}</div>}
-
-            {/* Regular Message */}
-            {message && <div className="message">{message}</div>}
         </div>
     );
 };
-
 export default Board;
-

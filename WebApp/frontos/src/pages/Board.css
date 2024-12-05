@@ -12,11 +12,13 @@
   justify-content: space-around;
   align-items: flex-start;
   margin: 20px;
-  flex: 1; /* Ensures content takes available space */
+  flex: 1;
+  /* Ensures content takes available space */
 }
 
 .board-area {
   width: 80%;
+  margin: 20px;;
 }
 
 .insert-options {
@@ -25,6 +27,7 @@
   border-radius: 10px;
   width: 20%;
   text-align: center;
+  margin: 20px;
 }
 
 .insert-option {
@@ -50,7 +53,8 @@
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  transition: background-color 0.3s, color 0.3s;
+  /* Smooth transition */
 }
 
 .results-list {
@@ -76,26 +80,28 @@
   color: #004b66;
 }
 
-.error {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #ffdddd;
-  color: #d8000c;
-  padding: 10px 20px;
-  border: 1px solid #d8000c;
-  border-radius: 5px;
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  width: 80%;
+  margin: 10px;
 }
 
-.message {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #F0F4C3;
-  color: #2E7D32;
-  padding: 10px 20px;
-  border: 1px solid #2E7D32;
-  border-radius: 5px;
+.card-header {
+  font-size: 0.8rem;
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.card-rowname {
+  margin-left: 10px;
+  font-weight:600;
 }

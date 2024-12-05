@@ -16,6 +16,117 @@ db_config = {
 }
 
 
+@app.route("/api/insertUniversity", methods=["POST"])
+def insert_university():
+    data = request.json
+    university_name = data.get('university')
+
+    if not university_name:
+        return jsonify({"error": "University name is required"}), 400
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            # Insert university if it doesn't exist
+            # insert_query = """
+            #     INSERT INTO universities (name)
+            #     VALUES (%s)
+            #     ON DUPLICATE KEY UPDATE name = name
+            # """
+            # cursor.execute(insert_query, (university_name,))
+
+            # Query the inserted/updated university information
+            select_query = """
+                SELECT InstitutionId, Institution_Name, City, Country
+                FROM m_university
+                WHERE Institution_Name = %s
+            """
+            cursor.execute(select_query, (university_name,))
+            university_info = cursor.fetchone()
+            print("AAAAAAAAAAAAAA")
+            if university_info:
+                conn.commit()
+                print("AAAAAAAAAAAAAA")
+                print(university_info)
+                return jsonify(university_info), 200
+            else:
+                return jsonify({"error": "University not found after insertion"}), 404
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
+
+@app.route("/api/insertTopic", methods=["POST"])
+def insert_topic():
+    data = request.json
+    topic_name = data.get('topic')
+
+    if not topic_name:
+        return jsonify({"error": "Topic name is required"}), 400
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            select_query = """
+                SELECT topic_id, topic_name, category
+                FROM m_topic
+                WHERE topic_name = %s
+            """
+            cursor.execute(select_query, (topic_name,))
+            topic_info = cursor.fetchone()
+            if topic_info:
+                conn.commit()
+                print(topic_info)
+                return jsonify(topic_info), 200
+            else:
+                return jsonify({"error": "Topic not found after insertion"}), 404
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
+
+@app.route("/api/insertPeople", methods=["POST"])
+def insert_people():
+    data = request.json
+    people_name = data.get('people')
+    print("PeopleName:", people_name)
+
+    if not people_name:
+        return jsonify({"error": "People name is required"}), 400
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            select_query = """
+                SELECT author_id, author_name, university_name
+                FROM m_author
+                WHERE author_name = %s
+            """
+            cursor.execute(select_query, (people_name,))
+            people_info = cursor.fetchone()
+            if people_info:
+                conn.commit()
+                print(people_info)
+                return jsonify(people_info), 200
+            else:
+                return jsonify({"error": "People not found after insertion"}), 404
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
+
 
 @app.route("/api/UpdateWorkInfo", methods=["PUT"])
 def update_work():
