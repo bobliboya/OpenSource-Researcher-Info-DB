@@ -74,16 +74,29 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
 }
 
-.option-button {
-  display: block;
+.insert-option {
+  margin-bottom: 20px;
+}
+
+.option-input {
   width: 80%;
-  margin: 10px auto;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  border: 1px solid #004b66;
+  font-size: 14px;
+}
+
+.option-button {
+  display: inline-block;
+  width: 80%;
+  margin: 0 auto;
   padding: 10px;
   background-color: #add8e6;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px; /* Optional: Increase button font size */
+  font-size: 14px;
   transition: background-color 0.3s, color 0.3s; /* Smooth transition */
 }
 
@@ -92,18 +105,41 @@
   color: white;
 }
 
-/* Optional: Authors Section Styles */
-/*
-.authors-section {
-  padding: 20px;
-  background-color: #f9f9f9;
+.results-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 10px;
+  text-align: left;
 }
 
-.authors-section h2 {
-  color: #333;
-  margin-bottom: 15px;
+.results-list li {
+  background-color: #f0f0f0;
+  margin-bottom: 5px;
+  padding: 8px;
+  border-radius: 4px;
 }
-*/
+
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #004b66;
+}
+
+.error {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffdddd;
+  color: #d8000c;
+  padding: 10px 20px;
+  border: 1px solid #d8000c;
+  border-radius: 5px;
+}
+
 
 
 
