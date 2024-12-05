@@ -287,6 +287,66 @@ def get_data():
     conn.close()
     return jsonify(authors)
 
+@app.route("/api/music")
+def get_music():
+    title = request.args.get('title')
+    if not title:
+        return jsonify({"error": "Title parameter is required"}), 400
+    print("title is " + title)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = """
+            SELECT genre
+            FROM genre_category
+            WHERE category =(
+                            SELECT category
+                            FROM topic
+                            WHERE topic_id =( 
+                                            SELECT topic_id
+                                            FROM topic_work
+                                            WHERE work_id = (
+                                                            SELECT work_id
+                                                            FROM work
+                                                            WHERE title = %s
+                                                            )
+                                            Limit 1
+                                            )
+                            )
+            """
+    cursor.execute(query, (title,))
+    genre= cursor.fetchall()
+
+    if conn.is_connected():
+        cursor.close()
+        conn.close()
+    return jsonify([{"genre": row[0]} for row in genre])
+
+@app.route("/api/music/delete", methods=["DELETE"])
+def delete_music():
+    music_id = request.args.get('musicId')
+    if not music_id:
+        return jsonify({"error": "MusicId parameter is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # SQL Delete Command
+        query = "DELETE FROM m_music WHERE MusicId = %s"
+        cursor.execute(query, (music_id,))
+
+        # Commit the changes
+        conn.commit()
+
+        # Close the database connection
+        cursor.close()
+        conn.close()
+
+        return jsonify({"message": f"Music with ID {music_id} deleted successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/")
 def home():
     return "Backend for Team 096. Used as an API"
