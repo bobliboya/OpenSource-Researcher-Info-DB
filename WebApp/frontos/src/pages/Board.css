@@ -5,15 +5,6 @@
   flex-direction: column;
   height: 100vh;
   background-color: #ffffff;
-  font-family: Arial, sans-serif; /* Optional: Set a default font */
-}
-
-.navbar {
-  background-color: #004b66;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  font-size: 24px;
 }
 
 .board-content {
@@ -24,58 +15,20 @@
   flex: 1; /* Ensures content takes available space */
 }
 
-.create-board {
-  background-color: #b2ffb2;
-  padding: 20px;
-  border: 2px solid #004b66;
-  border-radius: 10px;
-  width: 40%;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-}
-
-.create-board h2 {
-  color: red;
-  font-size: 24px;
-  margin-bottom: 10px;
-}
-
-.board-input {
+.board-area {
   width: 80%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  border: 1px solid #004b66;
-  font-size: 16px; /* Optional: Increase input font size */
-}
-
-.create-button {
-  background-color: #add8e6;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px; /* Optional: Increase button font size */
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-}
-
-.create-button:hover {
-  background-color: #004b66;
-  color: white;
 }
 
 .insert-options {
-  background-color: #ffccaa;
-  padding: 20px;
+  background-color: #DCEDC8;
   border: 2px solid #004b66;
   border-radius: 10px;
-  width: 40%;
+  width: 20%;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
 }
 
 .insert-option {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .option-input {
@@ -91,18 +44,13 @@
   display: inline-block;
   width: 80%;
   margin: 0 auto;
-  padding: 10px;
+  padding: 8px;
   background-color: #add8e6;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-}
-
-.option-button:hover {
-  background-color: #004b66;
-  color: white;
 }
 
 .results-list {
@@ -140,29 +88,14 @@
   border-radius: 5px;
 }
 
-
-
-
-
-/* .board {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
-    font-family: Arial, sans-serif;
-  }
-  
-  .board h2 {
-    font-size: 2rem;
-    color: #282c34;
-    margin-bottom: 10px;
-  }
-  
-  .board p {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #333;
-  }
-   */
-
-   
+.message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #F0F4C3;
+  color: #2E7D32;
+  padding: 10px 20px;
+  border: 1px solid #2E7D32;
+  border-radius: 5px;
+}

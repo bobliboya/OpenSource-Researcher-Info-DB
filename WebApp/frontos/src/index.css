@@ -11,3 +11,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+input:placeholder-shown, textarea:placeholder-shown {
+  font-style: italic;
+}
+
+input, textarea {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  resize: vertical;
+}
+
+button {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;;
+  background-color: rgb(13, 110, 253);
+  color: aliceblue;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px; /* Optional: Increase button font size */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  text-align: center;
+}
+
+button:hover {
+  background-color: #004b66;
+  color: white;
+}
+
