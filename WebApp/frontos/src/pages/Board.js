@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Board.css"; // Include a CSS file for styling
-import graph_holder from "./img/graph_holder.png";
+// import axios from "axios"; // Import axios for HTTP requests
+import graph_holder from "./img/graph_holder.png"
 
 function processInput(inputString) {
     let elements = inputString.split(";");
