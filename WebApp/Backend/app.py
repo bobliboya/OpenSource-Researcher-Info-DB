@@ -1,12 +1,22 @@
 # app.py
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 import mysql.connector
 from s import *
 from api.query import *
+import utils
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+people_info_set = set()
+topic_info_set = set()
+university_info_set = set()
+
+# people_info_set = {frozenset({'name': 'Alice', 'university_name': 'University A'}.items()),
+#                    frozenset({'name': 'Bob', 'university_name': 'University A'}.items())}
+# university_info = {'Institution_Name': 'University A'}
+# topic_info_set = [{'topic_name': 'Computer Science'}, {'topic_name': 'Mathematics'}]
 
 db_config = {
     'user': db_user,
@@ -107,13 +117,39 @@ def insert_university():
             """
             cursor.execute(select_query, (university_name,))
             university_info = cursor.fetchone()
-            print("AAAAAAAAAAAAAA")
+            
             if university_info:
+                # Generate the relationship graph
+                output_file = 'relationship_graph.png'
+                utils.draw_relationship_graph(people_info_set, university_info, topic_info_set, output_file)
+
                 conn.commit()
-                print("AAAAAAAAAAAAAA")
-                print(university_info)
-                return jsonify(university_info), 200
+                return send_file(output_file, mimetype='image/png')
             else:
+                return jsonify({"error": "University not found after insertion"}), 404
+
+            # if university_info:
+            #     # compare university with other people
+            #     for people_info in people_info_set:
+            #         print("start comparing")
+            #         if utils.find_relationship(people_info, university_info):
+            #             print("YESSSSSSSSSSS")
+            #             print(people_info, university_info)
+            #         else:
+            #             print("NOOOOOOOOOOOOOOO")
+            #             print(people_info, university_info)
+            #     # draw the graph after inserting the university
+            #     print("start drawing")
+            #     output_file = 'relationship_graph.png'
+            #     utils.draw_relationship_graph(people_info_set, university_info, topic_info_set, output_file)
+            #     print("end drawing")
+            #     return send_file(output_file, mimetype='image/png')
+            #     # utils.draw_relationship_graph(people_info_set, university_info, topic_info_set)
+
+            #     # conn.commit()
+            #     # print(university_info)
+            #     # return jsonify(university_info), 200
+            # else:
                 return jsonify({"error": "University not found after insertion"}), 404
 
     except Exception as e:
@@ -123,6 +159,13 @@ def insert_university():
 
     finally:
         conn.close()
+
+@app.route('/draw_graph', methods=['GET'])
+def draw_graph():
+    output_file = 'relationship_graph.png'
+    utils.draw_relationship_graph(people_info_set, university_info_set, topic_info_set, output_file)
+    return send_file(output_file, mimetype='image/png')
+
 
 @app.route("/api/insertTopic", methods=["POST"])
 def insert_topic():
@@ -143,9 +186,19 @@ def insert_topic():
             cursor.execute(select_query, (topic_name,))
             topic_info = cursor.fetchone()
             if topic_info:
+                # compare the topic name with the other topics
+                # matching_topics = []
+                # for topic in topic_set:
+                #     if find_relationship(topic, topic_name):
+                #         matching_topics.append(topic)
+                
                 conn.commit()
                 print(topic_info)
                 return jsonify(topic_info), 200
+                # return jsonify({
+                #     "topic_info": topic_info,
+                #     "matching_topics": matching_topics
+                # }), 200
             else:
                 return jsonify({"error": "Topic not found after insertion"}), 404
 
@@ -177,8 +230,17 @@ def insert_people():
             cursor.execute(select_query, (people_name,))
             people_info = cursor.fetchone()
             if people_info:
+                # people_info_set.add(people_info)
+                # Convert people_info dictionary to a frozenset of its items
+                people_info_frozenset = frozenset(people_info.items())
+
+                # Add the frozenset to the people_info_set
+                people_info_set.add(people_info_frozenset)
+
                 conn.commit()
-                print(people_info)
+                print("people_info: ", people_info)
+                print("people_info_set: ", people_info_set)
+                print("people_info_frozenset: ", people_info_frozenset)
                 return jsonify(people_info), 200
             else:
                 return jsonify({"error": "People not found after insertion"}), 404
