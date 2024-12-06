@@ -15,6 +15,70 @@ db_config = {
     'database': db_name
 }
 
+def get_topic_id(topic_name):
+    if not topic_name:
+        return None  # Return None if no author name is provided
+
+    try:
+        # Establish connection
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Create a query to fetch the author ID for a specific name
+        query = "SELECT topic_id FROM topic WHERE topic_name = %s"
+        
+        # Execute query with the author's name
+        cursor.execute(query, (topic_name,))
+
+        # Fetch the result
+        result = cursor.fetchone()
+
+        # If an ID is found, return it; otherwise return None
+        return result[0] if result else None
+
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return None
+
+    finally:
+        # Clean up resources
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+
+def get_author_id(author_name):
+    if not author_name:
+        return None  # Return None if no author name is provided
+
+    try:
+        # Establish connection
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Create a query to fetch the author ID for a specific name
+        query = "SELECT author_id FROM author WHERE author_name = %s"
+        
+        # Execute query with the author's name
+        cursor.execute(query, (author_name,))
+
+        # Fetch the result
+        result = cursor.fetchone()
+
+        # If an ID is found, return it; otherwise return None
+        return result[0] if result else None
+
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return None
+
+    finally:
+        # Clean up resources
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.route("/api/insertUniversity", methods=["POST"])
 def insert_university():
@@ -131,7 +195,7 @@ def insert_people():
 @app.route("/api/UpdateWorkInfo", methods=["PUT"])
 def update_work():
     data = request.json
-    work_id = data.get('work_id')
+    work_id = "https://openalex.org/" + data.get('work_id')
     title = data.get('title')
     publication_year = data.get('publication_year')
     authors = data.get('authors', [])
@@ -146,57 +210,54 @@ def update_work():
                 WHERE work_id = %s
             """
             cursor.execute(query_work, (title, publication_year, work_id))
-            
-            # Delete existing authors/topics and re-insert them
-            query_delete_authors = """
-                DELETE FROM work_author
-                WHERE work_id = (SELECT work_id FROM work WHERE work_id = %s)
-            """
-            cursor.execute(query_delete_authors, (work_id,))
-
+            # delete all author entries in the work_author table
             for author in authors:
-                query_add_author = """
-                    INSERT INTO author (author_name)
-                    VALUES (%s)
-                    ON DUPLICATE KEY UPDATE author_name = author_name
-                """
-                cursor.execute(query_add_author, (author,))
+                author_id = get_author_id(author)
+                query_del_author = """
+                    DELETE FROM work_author 
+                    WHERE author_id = %s AND work_id = %s
+                    """
+                print(work_id)
+                cursor.execute(query_del_author, (author_id, work_id))
+            
+            # update the authors works relational table 
+            for author in authors:
+                # get the author id
+                author_id = get_author_id(author)
 
                 query_work_author = """
-                    INSERT INTO work_author (work_id, author_id)
-                    SELECT work.work_id, author.author_id
-                    FROM work, author
-                    WHERE work.title = %s AND author.author_name = %s
+                    INSERT 
+                    INTO work_author (work_id, author_id)
+                    VALUES (%s, %s)
                 """
-                cursor.execute(query_work_author, (title, author))
+                cursor.execute(query_work_author, (work_id, author_id))
             
-            query_delete_topics = """
-                DELETE FROM work_topic
-                WHERE work_id = (SELECT work_id FROM work WHERE title = %s)
-            """
-            cursor.execute(query_delete_topics, (title,))
-
             for topic in topics:
-                query_add_topic = """
-                    INSERT INTO topic (topic_name)
-                    VALUES (%s)
-                    ON DUPLICATE KEY UPDATE topic_name = topic_name
-                """
-                cursor.execute(query_add_topic, (topic,))
+                topic_id = get_topic_id(topic)
+                query_del_topic = """
+                    DELETE FROM topic_work 
+                    WHERE topic_id = %s AND work_id = %s
+                    """
+                cursor.execute(query_del_topic, (topic_id, work_id))
+            
+            # update the topic works relational table 
+            for topic in topics:
+                # get the author id
+                topic_id = get_topic_id(topic)
 
                 query_work_topic = """
-                    INSERT INTO work_topic (work_id, topic_id)
-                    SELECT work.work_id, topic.topic_id
-                    FROM work, topic
-                    WHERE work.title = %s AND topic.topic_name = %s
+                    INSERT 
+                    INTO topic_work (work_id, topic_id)
+                    VALUES (%s, %s)
                 """
-                cursor.execute(query_work_topic, (title, topic))
+                cursor.execute(query_work_topic, (work_id, topic_id))
 
         conn.commit()
         return jsonify({"message": "Work info updated successfully"}), 200
 
     except Exception as e:
         conn.rollback()
+        print(e)
         return jsonify({"error": str(e)}), 500
 
 # this function will return the authors, topics, and publication year for a given title
@@ -353,3 +414,7 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+
