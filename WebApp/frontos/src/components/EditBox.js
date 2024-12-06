@@ -34,7 +34,7 @@ const EditableFields = ({ data, onSave }) => {
   const handleSave = () => {
     // Prepare data for the PUT request
     const updatedData = {
-      work_id: workData.work_id,
+      work_id: workData.id,
       title: workData.title,
       publication_year: workData.publication_year,
       authors: workData.authors.split(',').map((author) => author.trim()),
@@ -50,7 +50,7 @@ const EditableFields = ({ data, onSave }) => {
     })
       .then((response) => {
         if (!response.ok) {
-          setSaveStatus("Error updating data");
+          setSaveStatus("Error updating data. Please use valid OpenAlex authors and topics.");
           throw new Error(`Failed to update data: ${response.status}`);
         }
         return response.json();
@@ -62,7 +62,7 @@ const EditableFields = ({ data, onSave }) => {
       })
       .catch((error) => {
         console.error('Error updating data:', error);
-        setSaveStatus("Error updating data");
+        setSaveStatus("Error updating data. Please use valid OpenAlex authors and topics.");
       });
       setShowSaveStatus(true);
   };
