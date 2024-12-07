@@ -5,6 +5,8 @@ from s import *
 from api.query import *
 import utils
 from flask_cors import CORS
+import base64
+from io import BytesIO
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -12,11 +14,10 @@ CORS(app)  # Enable CORS for all routes
 people_info_set = set()
 topic_info_set = set()
 university_info_set = set()
+work_info_set = set()
 
-# people_info_set = {frozenset({'name': 'Alice', 'university_name': 'University A'}.items()),
-#                    frozenset({'name': 'Bob', 'university_name': 'University A'}.items())}
-# university_info = {'Institution_Name': 'University A'}
-# topic_info_set = [{'topic_name': 'Computer Science'}, {'topic_name': 'Mathematics'}]
+work_author_dict = {}
+topic_work_dict = {}
 
 db_config = {
     'user': db_user,
@@ -90,6 +91,71 @@ def get_author_id(author_name):
         if conn:
             conn.close()
 
+def get_work_author_table():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            # Query to get the relational table
+            select_query = """
+                SELECT work_id, author_id
+                FROM m_work_author
+            """
+            cursor.execute(select_query)
+            results = cursor.fetchall()
+
+            # Convert the results to a dictionary
+            global work_author_dict
+            work_author_dict = {}
+            for row in results:
+                work_id = row['work_id']
+                author_id = row['author_id']
+                if work_id in work_author_dict:
+                    work_author_dict[work_id].append(author_id)
+                else:
+                    work_author_dict[work_id] = [author_id]
+            print(work_author_dict)
+
+    except Exception as e:
+        print("Error:", e)
+
+    finally:
+        conn.close()
+
+
+def get_topic_work_table():
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            # Query to get the relational table
+            select_query = """
+                SELECT topic_id, work_id
+                FROM m_topic_work
+            """
+            cursor.execute(select_query)
+            results = cursor.fetchall()
+
+            # Convert the results to a dictionary
+            global topic_work_dict
+            topic_work_dict = {}
+            for row in results:
+                topic_id = row['topic_id']
+                work_id = row['work_id']
+                if topic_id in topic_work_dict:
+                    topic_work_dict[topic_id].append(work_id)
+                else:
+                    topic_work_dict[topic_id] = [work_id]
+            print(topic_work_dict)
+
+    except Exception as e:
+        print("Error:", e)
+
+    finally:
+        conn.close()
+
+
+
+
+
 @app.route("/api/insertUniversity", methods=["POST"])
 def insert_university():
     data = request.json
@@ -101,14 +167,6 @@ def insert_university():
     conn = get_db_connection()
     try:
         with conn.cursor(dictionary=True) as cursor:
-            # Insert university if it doesn't exist
-            # insert_query = """
-            #     INSERT INTO universities (name)
-            #     VALUES (%s)
-            #     ON DUPLICATE KEY UPDATE name = name
-            # """
-            # cursor.execute(insert_query, (university_name,))
-
             # Query the inserted/updated university information
             select_query = """
                 SELECT InstitutionId, Institution_Name, City, Country
@@ -120,87 +178,25 @@ def insert_university():
             
             if university_info:
                 # Generate the relationship graph
+                university_info_set.add(frozenset(university_info.items()))
                 output_file = 'relationship_graph.png'
-                utils.draw_relationship_graph(people_info_set, university_info, topic_info_set, output_file)
+                print(university_info_set)
+                utils.draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, people_info_set, university_info_set, topic_info_set, output_file)
+
+                # conn.commit()
+                # return send_file(output_file, mimetype='image/png')
+                # Encode the image in base64
+                with open(output_file, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
 
                 conn.commit()
-                return send_file(output_file, mimetype='image/png')
+                return jsonify({
+                    "university_info": university_info,
+                    "image": encoded_string
+                }), 200
             else:
                 return jsonify({"error": "University not found after insertion"}), 404
 
-            # if university_info:
-            #     # compare university with other people
-            #     for people_info in people_info_set:
-            #         print("start comparing")
-            #         if utils.find_relationship(people_info, university_info):
-            #             print("YESSSSSSSSSSS")
-            #             print(people_info, university_info)
-            #         else:
-            #             print("NOOOOOOOOOOOOOOO")
-            #             print(people_info, university_info)
-            #     # draw the graph after inserting the university
-            #     print("start drawing")
-            #     output_file = 'relationship_graph.png'
-            #     utils.draw_relationship_graph(people_info_set, university_info, topic_info_set, output_file)
-            #     print("end drawing")
-            #     return send_file(output_file, mimetype='image/png')
-            #     # utils.draw_relationship_graph(people_info_set, university_info, topic_info_set)
-
-            #     # conn.commit()
-            #     # print(university_info)
-            #     # return jsonify(university_info), 200
-            # else:
-                return jsonify({"error": "University not found after insertion"}), 404
-
-    except Exception as e:
-        print("Error:", e)
-        conn.rollback()
-        return jsonify({"error": str(e)}), 500
-
-    finally:
-        conn.close()
-
-@app.route('/draw_graph', methods=['GET'])
-def draw_graph():
-    output_file = 'relationship_graph.png'
-    utils.draw_relationship_graph(people_info_set, university_info_set, topic_info_set, output_file)
-    return send_file(output_file, mimetype='image/png')
-
-
-@app.route("/api/insertTopic", methods=["POST"])
-def insert_topic():
-    data = request.json
-    topic_name = data.get('topic')
-
-    if not topic_name:
-        return jsonify({"error": "Topic name is required"}), 400
-
-    conn = get_db_connection()
-    try:
-        with conn.cursor(dictionary=True) as cursor:
-            select_query = """
-                SELECT topic_id, topic_name, category
-                FROM m_topic
-                WHERE topic_name = %s
-            """
-            cursor.execute(select_query, (topic_name,))
-            topic_info = cursor.fetchone()
-            if topic_info:
-                # compare the topic name with the other topics
-                # matching_topics = []
-                # for topic in topic_set:
-                #     if find_relationship(topic, topic_name):
-                #         matching_topics.append(topic)
-                
-                conn.commit()
-                print(topic_info)
-                return jsonify(topic_info), 200
-                # return jsonify({
-                #     "topic_info": topic_info,
-                #     "matching_topics": matching_topics
-                # }), 200
-            else:
-                return jsonify({"error": "Topic not found after insertion"}), 404
 
     except Exception as e:
         print("Error:", e)
@@ -219,6 +215,9 @@ def insert_people():
     if not people_name:
         return jsonify({"error": "People name is required"}), 400
 
+    if not work_author_dict:
+        get_work_author_table()
+
     conn = get_db_connection()
     try:
         with conn.cursor(dictionary=True) as cursor:
@@ -229,21 +228,136 @@ def insert_people():
             """
             cursor.execute(select_query, (people_name,))
             people_info = cursor.fetchone()
+
+            
             if people_info:
                 # people_info_set.add(people_info)
                 # Convert people_info dictionary to a frozenset of its items
                 people_info_frozenset = frozenset(people_info.items())
-
-                # Add the frozenset to the people_info_set
                 people_info_set.add(people_info_frozenset)
+                output_file = 'relationship_graph.png'
+                utils.draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, people_info_set, university_info_set, topic_info_set, output_file)
+                
+                with open(output_file, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                
 
                 conn.commit()
-                print("people_info: ", people_info)
-                print("people_info_set: ", people_info_set)
-                print("people_info_frozenset: ", people_info_frozenset)
-                return jsonify(people_info), 200
+                return jsonify({
+                    "people_info": people_info,
+                    "image": encoded_string
+                }), 200
             else:
                 return jsonify({"error": "People not found after insertion"}), 404
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
+
+
+
+
+
+
+
+
+
+
+
+# @app.route('/draw_graph', methods=['GET'])
+# def draw_graph():
+#     output_file = 'relationship_graph.png'
+#     utils.draw_relationship_graph(people_info_set, university_info_set, topic_info_set, output_file)
+#     return send_file(output_file, mimetype='image/png')
+
+
+@app.route("/api/insertTopic", methods=["POST"])
+def insert_topic():
+    data = request.json
+    topic_name = data.get('topic')
+
+    if not topic_name:
+        return jsonify({"error": "Topic name is required"}), 400
+    
+    if not topic_work_dict:
+        get_topic_work_table()
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            select_query = """
+                SELECT topic_id, topic_name, category
+                FROM m_topic
+                WHERE topic_name = %s
+            """
+            cursor.execute(select_query, (topic_name,))
+            topic_info = cursor.fetchone()
+            if topic_info:
+                topic_info_set.add(frozenset(topic_info.items()))
+                output_file = 'relationship_graph.png'
+                utils.draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, people_info_set, university_info_set, topic_info_set, output_file)
+
+                with open(output_file, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+
+                conn.commit()
+                print(topic_info)
+                return jsonify({
+                    "topic_info": topic_info,
+                    "image": encoded_string
+                }), 200
+            else:
+                return jsonify({"error": "Topic not found after insertion"}), 404
+
+    except Exception as e:
+        print("Error:", e)
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+
+    finally:
+        conn.close()
+
+@app.route("/api/insertWork", methods=["POST"])
+def insert_work():
+    data = request.json
+    work_name = data.get('work')
+    print("WorkName:", work_name)
+
+    if not work_name:
+        return jsonify({"error": "Work name is required"}), 400
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(dictionary=True) as cursor:
+            select_query = """
+                SELECT work_id, title, publication_year
+                FROM m_work
+                WHERE title = %s
+            """
+            cursor.execute(select_query, (work_name,))
+            work_info = cursor.fetchone()
+            print("WorkInfo:", work_info)
+            if work_info:
+                work_info_set.add(frozenset(work_info.items()))
+                output_file = 'relationship_graph.png'
+                print("start drawing")
+                utils.draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, people_info_set, university_info_set, topic_info_set, output_file)
+                print("end drawing")
+                with open(output_file, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+
+                conn.commit()
+                print("work_info:", work_info)
+                return jsonify({
+                    "work_info": work_info,
+                    "image": encoded_string
+                }), 200
+            else:
+                return jsonify({"error": "Work not found after insertion"}), 404
 
     except Exception as e:
         print("Error:", e)
