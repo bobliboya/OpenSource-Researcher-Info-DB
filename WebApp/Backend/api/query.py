@@ -5,13 +5,15 @@ topic_work_colnames = ["topic_id", "work_id"]
 university_colnames = ["InstitutionId", "Institution_Name", "City", "Country"]
 work_colnames = ["work_id", "title", "publication_year"]
 work_author_colnames = ["work_id", "author_id"]
-
+genre_category = ["category", "genre"]
 
 # SELECT 
 # FROM
 # WHERE
 # GROUP BY
 # ORDER BY
+
+
 
 def get_colnames(table):
     if (table == "author"):

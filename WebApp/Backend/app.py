@@ -533,30 +533,43 @@ def get_music():
     conn = get_db_connection()
     cursor = conn.cursor()
     query = """
-            SELECT genre
-            FROM genre_category
-            WHERE category =(
-                            SELECT category
-                            FROM topic
-                            WHERE topic_id =( 
-                                            SELECT topic_id
-                                            FROM topic_work
-                                            WHERE work_id = (
-                                                            SELECT work_id
-                                                            FROM work
-                                                            WHERE title = %s
-                                                            )
-                                            Limit 1
-                                            )
-                            )
+            SELECT filename 
+            FROM music
+            WHERE genre = (
+                        SELECT genre
+                        FROM genre_category
+                        WHERE category =(
+                                        SELECT category
+                                        FROM topic
+                                        WHERE topic_id =( 
+                                                        SELECT topic_id
+                                                        FROM topic_work
+                                                        WHERE work_id = (
+                                                                        SELECT work_id
+                                                                        FROM work
+                                                                        WHERE title = %s
+                                                                        )
+                                                        Limit 1
+                                                        )
+                                        )
+                        )
+            ORDER BY RAND()
+            Limit 1;
             """
     cursor.execute(query, (title,))
-    genre= cursor.fetchall()
+    result = cursor.fetchone()  # Fetch the single row
 
     if conn.is_connected():
         cursor.close()
         conn.close()
-    return jsonify([{"genre": row[0]} for row in genre])
+
+    if not result:
+        return jsonify({"error": "No file found for the given title"}), 404
+
+    filename = result[0]  # Extract the first element of the tuple
+    file_url = f"/static/audio/{filename}"  # Construct the file URL
+    return jsonify({"file_url": file_url})
+
 
 @app.route("/api/music/delete", methods=["DELETE"])
 def delete_music():
@@ -569,7 +582,7 @@ def delete_music():
         cursor = conn.cursor()
 
         # SQL Delete Command
-        query = "DELETE FROM m_music WHERE MusicId = %s"
+        query = "DELETE FROM music WHERE MusicId = %s"
         cursor.execute(query, (music_id,))
 
         # Commit the changes
