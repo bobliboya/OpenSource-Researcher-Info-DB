@@ -55,13 +55,18 @@ def draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, pe
         for work_info_frozenset in work_info_set:
             work_info = dict(work_info_frozenset)
             work_node = work_info['title']
-            print("---------------------------------------------")
-            print(work_info['work_id'])
+            # print("---------------------------------------------")
+            # print(work_info['work_id'])
             print(topic_info['topic_id'])
-            print(topic_work_dict)
-            print(topic_work_dict[topic_info['topic_id']])
+            # print(topic_work_dict)
+            
+            print("I'm in add work and topic edges")
+            if topic_info['topic_id'] not in topic_work_dict:
+                print("I'm out of add work and topic edges")
+                continue
             if work_info['work_id'] in topic_work_dict[topic_info['topic_id']]:
                 G.add_edge(work_node, topic_node, label='Belongs to')
+            # print("I'm out of add work and topic edges")
 
     # Add work and people edges
     for work_info_frozenset in work_info_set:
@@ -74,8 +79,12 @@ def draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, pe
             # print(work_info['work_id'])
             # print(people_info['author_id'])
             # print(work_author_dict[work_info['work_id']])
+            print("I'm in add work and people edges")
+            if work_info['work_id'] not in work_author_dict:
+                continue
             if people_info['author_id'] in work_author_dict[work_info['work_id']]:
                 G.add_edge(people_node, work_node, label='Wrote')
+            print("I'm out of add work and people edges")
 
     # Draw the graph
     plt.figure(figsize=(8, 8))  # Increase the figure size
