@@ -596,6 +596,83 @@ def delete_music():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/statistics', methods=['POST'])
+def get_statistics():
+    category = request.json.get('category')  # Expecting JSON input
+    if not category:
+        return jsonify({"error": "Category parameter is required"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Query 1: Publications by Year
+        query_by_year = """
+        SELECT work.publication_year,
+               COUNT(work.work_id)
+        FROM   work
+               JOIN topic_work
+                 ON topic_work.work_id = work.work_id
+               JOIN topic
+                 ON topic_work.topic_id = topic.topic_id
+        WHERE  topic.category = %s
+        GROUP  BY work.publication_year
+        ORDER  BY work.publication_year ASC;
+        """
+        cursor.execute(query_by_year, (category,))
+        publications_by_year = [{"year": row[0], "count": row[1]} for row in cursor.fetchall()]
+
+        # Query 2: Publications by University
+        query_by_university = """
+        SELECT   COUNT(work.work_id),
+                 author.university_name
+        FROM     work
+        JOIN     author
+        JOIN     work_author
+        JOIN     topic
+        JOIN     topic_work
+        ON       work_author.work_id = work.work_id
+        AND      work_author.author_id = author.author_id
+        AND      topic_work.topic_id = topic.topic_id
+        AND      topic_work.work_id = work.work_id
+        WHERE topic.category = %s
+        AND author.university_name != 'Unknown'
+        GROUP BY author.university_name
+        ORDER BY COUNT(work.work_id) DESC
+        LIMIT 100;
+        """
+        cursor.execute(query_by_university, (category,))
+        publications_by_university = [{"university": row[1], "count": row[0]} for row in cursor.fetchall()]
+
+        # Update Query
+        update_query = """
+        UPDATE work
+        SET pop = pop + 1
+        WHERE work_id IN (
+        SELECT work_id 
+        FROM topic_work 
+        WHERE topic_id IN (
+        SELECT topic_id 
+        FROM topic 
+        WHERE category = %s
+        ));
+        """
+        cursor.execute(update_query, (category,))
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+    return jsonify({
+        "publications_by_year": publications_by_year,
+        "publications_by_university": publications_by_university,
+        "update_message": "Database updated successfully."
+    })
 
 @app.route("/")
 def home():

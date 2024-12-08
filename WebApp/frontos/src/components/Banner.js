@@ -14,6 +14,7 @@ const Banner = () => {
         <Link to="/about" className="banner-button">About</Link>
         <Link to="/music" className="banner-button">Music</Link>
         <Link to="/edit-data" className="banner-button">Edit Data</Link>
+        <Link to="/statistics" className="banner-button">Statistics</Link>
       </div>
     </header>
   );

@@ -6,6 +6,8 @@ import Board from "./pages/Board";
 import Home from "./pages/Home";
 import Music from "./pages/Music";
 import EditData from "./pages/EditData";
+import Statistics from "./pages/Statistics";
+
 const App = () => {
   return (
     <Router>
@@ -16,7 +18,8 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/board" element={<Board />} />
           <Route path="/music" element={<Music />} />
-          <Route path="/edit-data" element={<EditData />} /> 
+          <Route path="/edit-data" element={<EditData />} />
+          <Route path="/statistics" element={<Statistics />} />
         </Routes>
       </div>
     </Router>

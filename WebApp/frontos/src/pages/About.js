@@ -15,6 +15,18 @@ const About = () => {
         modern web applications. We value creativity, collaboration, and customer satisfaction.
       </p>
       <p>Thank you for visiting, and we hope you enjoy exploring our app!</p>
+      <p>For reference here are the topic categories and associated music genres.
+      <p>blues - Agricultural and Biological Sciences, Arts and Humanities, Biochemistry, Genetics and Molecular Biology</p>
+      <p>classical - Business, Management and Accounting, Chemical Engineering</p>
+      <p>country - Chemistry, Computer Science, Decision Science</p>
+      <p>disco - Dentistry, Earth and Planetary Sciences</p>
+      <p>hiphop - Economics, Econometrics and Finance, Energy, Engineering</p>
+      <p>jazz - Environmental Science, Health Professions, Immunology and Microbiology</p>
+      <p>metal - Materials Science, Mathematics, Medicine</p>
+      <p>pop - Neuroscience, Nursing </p>
+      <p>reggae - Pharmacology, Toxicology and Pharmaceutics, Physics and Astronomy</p>
+      <p>rock - Psychology, Social Sciences, Veterinary</p>
+      </p>
     </div>
   );
 };
