@@ -153,6 +153,24 @@ def get_topic_work_table():
         conn.close()
 
 
+def get_work_tag(work_id):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        query = "SELECT tag FROM work WHERE work_id = %s"
+        cursor.execute(query, (work_id,))
+        result = cursor.fetchone()
+        return result['tag'] if result else None
+
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return None
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
 
@@ -335,13 +353,23 @@ def insert_work():
         with conn.cursor(dictionary=True) as cursor:
             select_query = """
                 SELECT work_id, title, publication_year
-                FROM m_work
+                FROM work
                 WHERE title = %s
             """
             cursor.execute(select_query, (work_name,))
             work_info = cursor.fetchone()
             print("WorkInfo:", work_info)
             if work_info:
+                # Call the stored procedure to get the tag value
+                tag_value = get_work_tag(work_info['work_id'])
+                print("Tag Value:", tag_value)
+                if tag_value == 1:
+                    print("i should modify the work info")
+                    work_info['title'] += '*'
+                # node_color = 'orange' if tag_value == 1 else 'default_color'
+                # print(f"Node Color: {node_color}")
+                print(f"Modified WorkInfo: {work_info}")
+
                 work_info_set.add(frozenset(work_info.items()))
                 output_file = 'relationship_graph.png'
                 print("start drawing")
