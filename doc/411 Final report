@@ -1,0 +1,26 @@
+CS 411 Group 096 OpenSource Final Report
+Originally we had a table in our database to store user information, but we removed this feature. Something we added was a music table, which plays music for users when they read a paper, with the music’s genre being associated with the paper’s topic category.
+We were successful in being able to store and analyze the relationships between authors, works, universities in the backend and draw a picture of the graph to that effect. However, we failed to achieve our vision of being able to create an interactive graph in which the user could click on one node and then see details about the node.
+Originally we had planned to scrape LinkedIn for our data on authors of works, however we then found such author information on OpenAlex (Dataset 7). Similarly, we had originally planned to use Kaggle to get the connections between research outputs, but that information too could be found on OpenAlex (Dataset 5). To the work table, we added a popularity counter and a tag that gives us a quick metric for how works are popular relative to each other. 
+We have no major changes to the ER diagram or the table implementations, only small details to correct the relation between them (one to one, many to many, etc.) fro stage 2 regrading.
+	A functionality that we removed was the ability for users to create their own account on the website which we deemed unnecessary. Additionally, the interactive component of the graph was scrapped as it would take far more time to develop than we had available on our hands.
+	Our application is complemented by advanced data programs, as it allows a large number of entries to be stored in our database which provides more information to the users of our website. In fact, we have 36996 authors, 2892 topics, 21607 universities, 9969 works and 1000 music files. More is possible, but we were limited by the usage limits of the OpenAlex API. 
+
+
+Each team member should describe one technical challenge that the team encountered.  This should be sufficiently detailed such that another future team could use this as helpful advice if they were to start a similar project or where to maintain your project. 
+(Everyone describes one challenge here)
+Philip: One difficult portion of this project was connecting the three components of our project. We have the React frontend, Flask backend, and GCP hosted database. We learned how  to use the mysql.connector to connect to our database from our backend, and experimented with several connection tools to communicate between the frontend and backend. We settled with sending/receiving JSON data using fetch. Part of this was learning to handle errors gracefully. We learned to constantly check return values as there are many potential points of failure. 
+Alex: One challenge is how to convert the sql structure we learn in lecture to the working python structure. We meet many problems when we try to implement some queries, transactions, stored procedures in python since our backend is implement with python.
+Boyang: Need to validate the data before importing to the tables in the database. For example, use Excel to clean the csv…
+Chinmay: Another technical challenge was learning how to create the frontend of the database. Online tutorials were key in helping us learn the React app skills needed to build the front end.
+
+One future feature that could be implemented is fuzzy search, that is, if a user makes a mistake when searching the database, it outputs close results. Another feature that could be implemented is searchable IDs, currently we only support searching the database via names, but searching by the IDs associated with each row would be more efficient.
+
+Describe the final division of labor and how well you managed teamwork.
+(Everyone describes the work has been done)
+Philip: Topic selection, relational schema, advanced query generation, framework research and selection, GCP integration, website skeleton/structure,  edit data page. 
+Alex: implement the board creating page, board inserting data visualization, stored procedure
+Boyang: Data cleaning, import data into CSV, board creation…
+Chinmay: Topic selection, project proposal, UML diagram, relational schema, advanced query generation, music page creation and data cleaning, statistics page, creation of transaction
+
+
