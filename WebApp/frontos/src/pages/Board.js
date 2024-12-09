@@ -408,6 +408,9 @@ function makeTopicCard(topic) {
             <div>
                 <span className="card-rowname">Category:</span> {topic.category}
             </div>
+            <div>
+                <span className="card-rowname">Total Popularity:</span> {topic.total_popularity} {/* Display the new key */}
+            </div>
         </div>
     );
 }

@@ -129,7 +129,7 @@ def get_topic_work_table():
             # Query to get the relational table
             select_query = """
                 SELECT topic_id, work_id
-                FROM m_topic_work
+                FROM topic_work
             """
             cursor.execute(select_query)
             results = cursor.fetchall()
@@ -144,7 +144,7 @@ def get_topic_work_table():
                     topic_work_dict[topic_id].append(work_id)
                 else:
                     topic_work_dict[topic_id] = [work_id]
-            print(topic_work_dict)
+            # print(topic_work_dict)
 
     except Exception as e:
         print("Error:", e)
@@ -280,7 +280,39 @@ def insert_people():
 
 
 
+def get_total_pop_of_category(category):
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        # query = "CALL GetTotalPop('%s', @result); SELECT @result;"
+        query = """
+            SELECT SUM(pop) AS total_pop
+            FROM work
+            WHERE work_id IN (
+                SELECT tw.work_id
+                FROM topic_work tw
+                JOIN topic t ON tw.topic_id = t.topic_id
+                WHERE t.category = %s
+            );
+            """
+        cursor.execute(query, (category,))
+        # print("result:", result)
+        # result = cursor.fetchone()
+        # new_query = "SELECT @total AS total_pop;"
+        # cursor.execute(new_query)
+        result = cursor.fetchone()
+        print("result:", result)
+        return result['total_pop'] if result else None
 
+    except mysql.connector.Error as err:
+        print(f"Database error: {err}")
+        return None
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
 
@@ -309,12 +341,20 @@ def insert_topic():
         with conn.cursor(dictionary=True) as cursor:
             select_query = """
                 SELECT topic_id, topic_name, category
-                FROM m_topic
+                FROM topic
                 WHERE topic_name = %s
             """
+            print("finish query")
             cursor.execute(select_query, (topic_name,))
             topic_info = cursor.fetchone()
+            # print("topic_info:", topic_info)
             if topic_info:
+                # print("staart getting total pop")
+                new_value = get_total_pop_of_category(topic_info['category'])
+                # print("finished getting total pop")
+                print("new_value:", new_value)
+                topic_info['total_popularity'] = new_value
+                # print("topic_info: ", topic_info)
                 topic_info_set.add(frozenset(topic_info.items()))
                 output_file = 'relationship_graph.png'
                 utils.draw_relationship_graph(topic_work_dict, work_author_dict, work_info_set, people_info_set, university_info_set, topic_info_set, output_file)
