@@ -31,20 +31,15 @@ def get_topic_id(topic_name):
         return None  # Return None if no author name is provided
 
     try:
-        # Establish connection
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Create a query to fetch the author ID for a specific name
         query = "SELECT topic_id FROM topic WHERE topic_name = %s"
         
-        # Execute query with the author's name
         cursor.execute(query, (topic_name,))
 
-        # Fetch the result
         result = cursor.fetchone()
 
-        # If an ID is found, return it; otherwise return None
         return result[0] if result else None
 
     except mysql.connector.Error as err:
@@ -52,7 +47,6 @@ def get_topic_id(topic_name):
         return None
 
     finally:
-        # Clean up resources
         if cursor:
             cursor.close()
         if conn:
@@ -68,16 +62,12 @@ def get_author_id(author_name):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Create a query to fetch the author ID for a specific name
         query = "SELECT author_id FROM author WHERE author_name = %s"
         
-        # Execute query with the author's name
         cursor.execute(query, (author_name,))
 
-        # Fetch the result
         result = cursor.fetchone()
 
-        # If an ID is found, return it; otherwise return None
         return result[0] if result else None
 
     except mysql.connector.Error as err:
@@ -85,7 +75,6 @@ def get_author_id(author_name):
         return None
 
     finally:
-        # Clean up resources
         if cursor:
             cursor.close()
         if conn:
@@ -656,7 +645,6 @@ def delete_music():
         # Commit the changes
         conn.commit()
 
-        # Close the database connection
         cursor.close()
         conn.close()
 
