@@ -1,16 +1,36 @@
-# TeamID-SampleProject
-This is a template for CS411 project repository. Please make sure that your title follows the convention: [TeamID]-[YourTeamName]. All TeamID should have a three digit coding (i.e. if you are team 20, you should have `team020` as your ID.). You should also make sure that your url for this repository is [fa24-cs411-team000-teamname.git] so TAs can correctly clone your repository and keep them up-to-date.
+# OpenSource Researcher Information Database
 
-Once you setup your project, please remember to submit your team formation to the team form.
+This project helps aspiring PhD students discover potential research mentors by exploring connections between researchers, academic papers, research fields, and institutions. It uses data from [OpenAlex](https://openalex.org/), an open catalog of scholarly metadata.
 
-## Permission
-You should make sure you allow TAs to access your repository. You can add TA(s) as a collaborator to your repository.
+## 🔍 Overview
 
-## Preparing for your release
-Eash submission should be in it's own [release](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases). Release are specific freezes to your repository. You should submit your commit hash on canvas or google sheet. When tagging your stage, please use the tag `stage.x` where x is the number to represent the stage.
+Users can search topics of interest and find relevant papers, authors, and institutions. The platform also provides interactive visualizations that illustrate relationships and key statistics in a given research area.
 
-## Keeping things up-to-date
-You should make sure you keep your project root files up-to-date. Information for each file/folders are explained.
+## 💾 Features
 
-## Code Contribution
-Individual code contribution will be used to evaluate individual contribution to the project.
+- Relational database schema designed for flexible search and data integrity
+- Advanced SQL techniques:
+  - Stored procedures
+  - Triggers
+  - Transactions
+- Search interface for exploring researchers, topics, and affiliations
+- Data visualizations to map researcher-paper-field relationships
+
+## 🛠 Tech Stack
+
+- **Backend**: Flask
+- **Frontend**: React
+- **Database**: MySQL hosting on GCP
+
+## 📊 Visualizations
+
+We use interactive charts and graphs to represent:
+
+- Co-authorship networks
+- Topic clusters
+- Institutional affiliations
+- Publication trends
+
+## 📚 Data Source
+
+Powered by [OpenAlex](https://openalex.org/), a comprehensive database of scholarly works and connections.
